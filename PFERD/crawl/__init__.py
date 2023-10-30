@@ -1,6 +1,7 @@
 from configparser import SectionProxy
 from typing import Callable, Dict
 
+from .hka_ilias.hka_ilias_web_crawler import HkaIliasWebCrawlerSection, HkaIliasWebCrawler
 from ..auth import Authenticator
 from ..config import Config
 from .crawler import Crawler, CrawlError, CrawlerSection  # noqa: F401
@@ -22,4 +23,6 @@ CRAWLERS: Dict[str, CrawlerConstructor] = {
         KitIliasWebCrawler(n, KitIliasWebCrawlerSection(s), c, a),
     "kit-ipd": lambda n, s, c, a:
         KitIpdCrawler(n, KitIpdCrawlerSection(s), c),
+    "hka-ilias-web": lambda n, s, c, a:
+    HkaIliasWebCrawler(n, HkaIliasWebCrawlerSection(s), c, a),
 }
