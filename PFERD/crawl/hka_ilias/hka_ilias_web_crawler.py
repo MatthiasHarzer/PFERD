@@ -19,7 +19,7 @@ class HkaIliasWebCrawlerSection(KitIliasWebCrawlerSection):
 
 class HkaIliasWebCrawler(KitIliasWebCrawler):
     """
-    A HKA ILIAS web crawler, based on the KitIliasWebCrawler
+    An HKA ILIAS web crawler, based on the KitIliasWebCrawler
     """
 
     def __init__(
@@ -49,12 +49,7 @@ class HkaLoginService:
 
     async def login(self, sess: aiohttp.ClientSession) -> None:
         """
-        Performs the ILIAS Shibboleth authentication dance and saves the login
-        cookies it receieves.
-
-        This function should only be called whenever it is detected that you're
-        not logged in. The cookies obtained should be good for a few minutes,
-        maybe even an hour or two.
+        Performs the login process for the HKA ILIAS
         """
 
         username, password = await self._auth.credentials()
