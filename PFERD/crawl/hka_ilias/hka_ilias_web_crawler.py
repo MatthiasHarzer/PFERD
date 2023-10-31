@@ -1,3 +1,4 @@
+from configparser import SectionProxy
 from typing import Dict
 
 import aiohttp
@@ -12,8 +13,8 @@ _ILIAS_URL = "https://ilias.h-ka.de"
 
 
 class HkaIliasWebCrawlerSection(KitIliasWebCrawlerSection):
-    def __init__(self, *args):
-        super().__init__(*args, ilias_url=_ILIAS_URL)
+    def __init__(self, section: SectionProxy):
+        super().__init__(section, ilias_url=_ILIAS_URL)
 
 
 class HkaIliasWebCrawler(KitIliasWebCrawler):
@@ -31,7 +32,8 @@ class HkaIliasWebCrawler(KitIliasWebCrawler):
         # Setting a main authenticator for cookie sharing
         auth = section.auth(authenticators)
         login_service = HkaShibbolethLogin(auth)
-        super().__init__(name, section, config, authenticators, login_service=login_service, ilias_url=_ILIAS_URL)
+        super().__init__(name, section, config, authenticators,
+                         login_service=login_service, ilias_url=_ILIAS_URL)
 
 
 class HkaShibbolethLogin:
@@ -41,10 +43,10 @@ class HkaShibbolethLogin:
 
     # idk why the HKA ILIAS requires these stupid query params to handle requests,
     # but without it won't authenticate
-    _LOGIN_URL = (f"{_ILIAS_URL}/ilias.php?lang=de&target=root_1&cmd=post&cmdClass=ilstartupgui&cmdNode=11g"
-                  f"&baseClass=ilStartUpGUI&rtoken")
-    _LOGIN_CHECK_SUCCESS_URL = (f"{_ILIAS_URL}/ilias.php?cmdClass=ilmembershipoverviewgui&cmdNode=jq&baseClass"
-                                f"=ilmembershipoverviewgui")
+    _LOGIN_URL = (f"{_ILIAS_URL}/ilias.php?lang=de&target=root_1&cmd=post&cmdClass=ilstartupgui"
+                  f"&cmdNode=11g&baseClass=ilStartUpGUI&rtoken")
+    _LOGIN_CHECK_SUCCESS_URL = (f"{_ILIAS_URL}/ilias.php?cmdClass=ilmembershipoverviewgui&cmdNode=jq"
+                                f"&baseClass=ilmembershipoverviewgui")
 
     def __init__(self, authenticator: Authenticator, ) -> None:
         self._auth = authenticator

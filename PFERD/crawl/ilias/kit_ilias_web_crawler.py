@@ -6,6 +6,7 @@ from collections.abc import Awaitable, Coroutine
 from pathlib import PurePath
 from typing import Any, Callable, Dict, List, Literal, Optional, Set, Union, cast, Protocol
 from urllib.parse import urljoin
+from configparser import SectionProxy
 
 import aiohttp
 import yarl
@@ -37,7 +38,7 @@ class IliasLoginService(Protocol):
     """
     The service for authenticating with ILIAS.
     """
-    async def login(self, session: aiohttp.ClientSession):
+    async def login(self, session: aiohttp.ClientSession) -> None:
         """
         Performs the ILIAS authentication flow and saves the login cookies it
         receives.
@@ -45,8 +46,8 @@ class IliasLoginService(Protocol):
 
 
 class KitIliasWebCrawlerSection(HttpCrawlerSection):
-    def __init__(self, *args, ilias_url: str = _ILIAS_URL):
-        super().__init__(*args)
+    def __init__(self, section: SectionProxy, /, *, ilias_url: str = _ILIAS_URL):
+        super().__init__(section)
         self.ilias_url = ilias_url
 
     def target(self) -> TargetType:
@@ -194,7 +195,7 @@ class KitIliasWebCrawler(HttpCrawler):
             config: Config,
             authenticators: Dict[str, Authenticator],
             /, *,
-            login_service: IliasLoginService = None,
+            login_service: Optional[IliasLoginService] = None,
             ilias_url: str = _ILIAS_URL,
     ):
         # Setting a main authenticator for cookie sharing
@@ -207,6 +208,7 @@ Please avoid using too many parallel requests as these are the KIT ILIAS
 instance's greatest bottleneck.
             """.strip())
 
+        self._shibboleth_login: IliasLoginService
         if login_service is None:
             self._shibboleth_login = KitShibbolethLogin(
                 auth,
