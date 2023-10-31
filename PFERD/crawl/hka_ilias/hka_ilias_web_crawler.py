@@ -31,16 +31,12 @@ class HkaIliasWebCrawler(KitIliasWebCrawler):
     ):
         # Setting a main authenticator for cookie sharing
         auth = section.auth(authenticators)
-        login_service = HkaShibbolethLogin(auth)
+        login_service = HkaLoginService(auth)
         super().__init__(name, section, config, authenticators,
                          login_service=login_service, ilias_url=_ILIAS_URL)
 
 
-class HkaShibbolethLogin:
-    """
-    Login via KIT's shibboleth system.
-    """
-
+class HkaLoginService:
     # idk why the HKA ILIAS requires these stupid query params to handle requests,
     # but without it won't authenticate
     _LOGIN_URL = (f"{_ILIAS_URL}/ilias.php?lang=de&target=root_1&cmd=post&cmdClass=ilstartupgui"
@@ -75,6 +71,6 @@ class HkaShibbolethLogin:
 
     @staticmethod
     async def _login_successful(sess: aiohttp.ClientSession) -> bool:
-        async with sess.get(HkaShibbolethLogin._LOGIN_CHECK_SUCCESS_URL) as request:
+        async with sess.get(HkaLoginService._LOGIN_CHECK_SUCCESS_URL) as request:
             soup = soupify(await request.read())
             return soup.find("div", {"class": "custom-login-page"}) is None
