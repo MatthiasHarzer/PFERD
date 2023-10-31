@@ -3,10 +3,10 @@ import base64
 import os
 import re
 from collections.abc import Awaitable, Coroutine
-from pathlib import PurePath
-from typing import Any, Callable, Dict, List, Literal, Optional, Set, Union, cast, Protocol
-from urllib.parse import urljoin
 from configparser import SectionProxy
+from pathlib import PurePath
+from typing import Any, Callable, Dict, List, Literal, Optional, Protocol, Set, Union, cast
+from urllib.parse import urljoin
 
 import aiohttp
 import yarl

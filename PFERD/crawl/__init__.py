@@ -1,10 +1,10 @@
 from configparser import SectionProxy
 from typing import Callable, Dict
 
-from .hka_ilias import HkaIliasWebCrawler, HkaIliasWebCrawlerSection
 from ..auth import Authenticator
 from ..config import Config
 from .crawler import Crawler, CrawlError, CrawlerSection  # noqa: F401
+from .hka_ilias import HkaIliasWebCrawler, HkaIliasWebCrawlerSection
 from .ilias import KitIliasWebCrawler, KitIliasWebCrawlerSection
 from .kit_ipd_crawler import KitIpdCrawler, KitIpdCrawlerSection
 from .local_crawler import LocalCrawler, LocalCrawlerSection

@@ -3,11 +3,11 @@ from typing import Dict
 
 import aiohttp
 
-from ..crawler import CrawlError
-from ..ilias.kit_ilias_web_crawler import KitIliasWebCrawler, KitIliasWebCrawlerSection
 from ...auth import Authenticator
 from ...config import Config
 from ...utils import soupify
+from ..crawler import CrawlError
+from ..ilias.kit_ilias_web_crawler import KitIliasWebCrawler, KitIliasWebCrawlerSection
 
 _ILIAS_URL = "https://ilias.h-ka.de"
 
