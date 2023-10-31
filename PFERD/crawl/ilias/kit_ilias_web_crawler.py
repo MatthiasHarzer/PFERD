@@ -4,7 +4,7 @@ import os
 import re
 from collections.abc import Awaitable, Coroutine
 from pathlib import PurePath
-from typing import Any, Callable, Dict, List, Literal, Optional, Set, Union, cast
+from typing import Any, Callable, Dict, List, Literal, Optional, Set, Union, cast, Protocol
 from urllib.parse import urljoin
 
 import aiohttp
@@ -33,7 +33,22 @@ class KitShibbolethBackgroundLoginSuccessful():
     pass
 
 
+class IliasLoginService(Protocol):
+    """
+    The service for authenticating with ILIAS.
+    """
+    async def login(self, session: aiohttp.ClientSession):
+        """
+        Performs the ILIAS authentication flow and saves the login cookies it
+        receives.
+        """
+
+
 class KitIliasWebCrawlerSection(HttpCrawlerSection):
+    def __init__(self, *args, ilias_url: str = _ILIAS_URL):
+        super().__init__(*args)
+        self.ilias_url = ilias_url
+
     def target(self) -> TargetType:
         target = self.s.get("target")
         if not target:
@@ -45,7 +60,7 @@ class KitIliasWebCrawlerSection(HttpCrawlerSection):
         if target == "desktop":
             # Full personal desktop
             return target
-        if target.startswith(_ILIAS_URL):
+        if target.startswith(self.ilias_url):
             # ILIAS URL
             return target
 
@@ -177,7 +192,10 @@ class KitIliasWebCrawler(HttpCrawler):
             name: str,
             section: KitIliasWebCrawlerSection,
             config: Config,
-            authenticators: Dict[str, Authenticator]
+            authenticators: Dict[str, Authenticator],
+            /, *,
+            login_service: IliasLoginService = None,
+            ilias_url: str = _ILIAS_URL,
     ):
         # Setting a main authenticator for cookie sharing
         auth = section.auth(authenticators)
@@ -189,12 +207,15 @@ Please avoid using too many parallel requests as these are the KIT ILIAS
 instance's greatest bottleneck.
             """.strip())
 
-        self._shibboleth_login = KitShibbolethLogin(
-            auth,
-            section.tfa_auth(authenticators),
-        )
+        if login_service is None:
+            self._shibboleth_login = KitShibbolethLogin(
+                auth,
+                section.tfa_auth(authenticators),
+            )
+        else:
+            self._shibboleth_login = login_service
 
-        self._base_url = _ILIAS_URL
+        self._base_url = ilias_url
 
         self._target = section.target()
         self._link_file_redirect_delay = section.link_redirect_delay()
@@ -879,8 +900,8 @@ instance's greatest bottleneck.
                 continue
             if elem.name == "img":
                 if src := elem.attrs.get("src", None):
-                    url = urljoin(_ILIAS_URL, src)
-                    if not url.startswith(_ILIAS_URL):
+                    url = urljoin(self._base_url, src)
+                    if not url.startswith(self._base_url):
                         continue
                     log.explain(f"Internalizing {url!r}")
                     img = await self._get_authenticated(url)
