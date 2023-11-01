@@ -22,6 +22,8 @@ ambiguous situations.
 
 ## Unreleased
 
+## 3.5.1 - 2023-11-01
+
 ## 3.5.0 - 2023-09-13
 
 ### Added
