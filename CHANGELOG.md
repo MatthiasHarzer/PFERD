@@ -24,6 +24,9 @@ ambiguous situations.
 
 ## 3.5.1 - 2023-11-01
 
+### Added
+- Basic HKA ILIAS crawler. Use `hka-ilias-web` as the crawler.
+
 ## 3.5.0 - 2023-09-13
 
 ### Added
