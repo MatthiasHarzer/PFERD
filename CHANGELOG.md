@@ -22,6 +22,11 @@ ambiguous situations.
 
 ## Unreleased
 
+## 3.5.2 - 2024-03-19
+
+### Fixed
+- HKA ILIAS login not working
+
 ## 3.5.1 - 2023-11-01
 
 ### Added
