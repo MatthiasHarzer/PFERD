@@ -1,3 +1,4 @@
+import re
 from configparser import SectionProxy
 from typing import Dict
 
@@ -39,10 +40,10 @@ class HkaIliasWebCrawler(KitIliasWebCrawler):
 class HkaLoginService:
     # idk why the HKA ILIAS requires these stupid query params to handle requests,
     # but without it won't authenticate
-    _LOGIN_URL = (f"{_ILIAS_URL}/ilias.php?lang=de&target=root_1&cmd=post&cmdClass=ilstartupgui"
-                  f"&cmdNode=11g&baseClass=ilStartUpGUI&rtoken")
-    _LOGIN_CHECK_SUCCESS_URL = (f"{_ILIAS_URL}/ilias.php?cmdClass=ilmembershipoverviewgui&cmdNode=jq"
-                                f"&baseClass=ilmembershipoverviewgui")
+    _LOGIN_URL = (f"{_ILIAS_URL}/ilias.php?lang=de&cmd=post&cmdClass=ilstartupgui&cmdNode=11h&baseClass=ilStartUpGUI"
+                  f"&rtoken=")
+    _LOGIN_CHECK_SUCCESS_URL = f"{_ILIAS_URL}/ilias.php?baseClass=ilDashboardGUI&cmd=jumpToSelectedItems"
+    _LOGOUT_HREF_REGEX = re.compile("^https://ilias.h-ka.de/logout.php.*")
 
     def __init__(self, authenticator: Authenticator, ) -> None:
         self._auth = authenticator
@@ -64,8 +65,9 @@ class HkaLoginService:
         if not await self._login_successful(sess):
             raise CrawlError("Login failed")
 
-    @staticmethod
-    async def _login_successful(sess: aiohttp.ClientSession) -> bool:
+    async def _login_successful(self, sess: aiohttp.ClientSession) -> bool:
         async with sess.get(HkaLoginService._LOGIN_CHECK_SUCCESS_URL) as request:
             soup = soupify(await request.read())
-            return soup.find("div", {"class": "custom-login-page"}) is None
+            # This can be improved
+            logout_element = soup.find("a", href=self._LOGOUT_HREF_REGEX)
+            return logout_element is not None
