@@ -1,4 +1,4 @@
-# PFERD
+# PFERD (With HKA-ILIAS support)
 
 **P**rogramm zum **F**lotten, **E**infachen **R**unterladen von **D**ateien
 
