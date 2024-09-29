@@ -984,11 +984,11 @@ instance's greatest bottleneck.
 
     # We repeat this as the login method in shibboleth doesn't handle I/O errors.
     # Shibboleth is quite reliable as well, the repeat is likely not critical here.
-    @ _iorepeat(3, "Login", failure_is_error=True)
+    @_iorepeat(3, "Login", failure_is_error=True)
     async def _authenticate(self) -> None:
         await self._shibboleth_login.login(self.session)
 
-    @ staticmethod
+    @staticmethod
     def _is_logged_in(soup: BeautifulSoup) -> bool:
         # Normal ILIAS pages
         mainbar: Optional[Tag] = soup.find(class_="il-maincontrols-metabar")
