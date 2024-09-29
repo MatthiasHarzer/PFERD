@@ -40,7 +40,7 @@ class HkaIliasWebCrawler(KitIliasWebCrawler):
 class HkaLoginService:
     # idk why the HKA ILIAS requires these stupid query params to handle requests,
     # but without it won't authenticate
-    _LOGIN_URL = (f"{_ILIAS_URL}/ilias.php?lang=de&cmd=post&cmdClass=ilstartupgui&cmdNode=11h"
+    _LOGIN_URL = (f"{_ILIAS_URL}/ilias.php?lang=de&cmd=post&cmdClass=ilstartupgui"
                   f"&baseClass=ilStartUpGUI&rtoken=")
     _LOGIN_CHECK_SUCCESS_URL = f"{_ILIAS_URL}/ilias.php?baseClass=ilDashboardGUI&cmd=jumpToSelectedItems"
     _LOGOUT_HREF_REGEX = re.compile("^https://ilias.h-ka.de/logout.php.*")
